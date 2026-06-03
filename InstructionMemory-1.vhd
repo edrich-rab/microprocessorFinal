@@ -15,46 +15,51 @@ type ROM_TYPE is array (0 to 31) of STD_LOGIC_VECTOR(31 downto 0);
 
 constant ROM : ROM_TYPE := (
 
-    -- ADDI X1, XZR, #5
+    -- ADDI X1, X0, #5       ; X1 = 5
     0 => x"91001401",
 
-    -- ADDI X2, XZR, #10
+    -- ADDI X2, X0, #10      ; X2 = 10
     1 => x"91002802",
 
-    -- ADD X3, X1, X2
+    -- ADD X3, X1, X2        ; X3 = 15
     2 => x"8B020023",
 
-    -- SUB X4, X3, X1
-    3 => x"CB010064",
+    -- MUL X4, X1, X2        ; X4 = 5 * 10 = 50
+    -- MUL extension reused from Lab 4 multiplier
+    3 => x"9B027C24",
 
-    -- AND X5, X3, X2
-    4 => x"8A020065",
+    -- SUB X5, X4, X3        ; X5 = 50 - 15 = 35
+    4 => x"CB030085",
 
-    -- ORR X6, X1, X2
-    5 => x"AA020026",
+    -- AND X6, X3, X2        ; X6 = 15 AND 10 = 10
+    5 => x"8A020066",
 
-    -- STUR X3, [XZR,#0]
-    6 => x"F8000003",
+    -- ORR X7, X1, X2        ; X7 = 5 OR 10 = 15
+    6 => x"AA020027",
 
-    -- LDUR X7, [XZR,#0]
-    7 => x"F8400007",
+    -- STUR X4, [X0,#0]      ; MEM[0] = 50
+    7 => x"F8000004",
 
-    -- B END
-    8 => x"14000002",
+    -- LDUR X0, [X0,#0]      ; X0 = 50
+    8 => x"F8400000",
 
-    -- ADDI X1, X0, #99 Should be skipped
-    9 => x"91018C01",
+    -- CBZ X0, SKIP          ; not taken because X0 = 50
+    9 => x"B4000040",
+
+    -- B END                 ; skip next ADDI
+    10 => x"14000002",
+
+    -- ADDI X1, X0, #99      ; skipped
+    11 => x"91018C01",
 
     -- END: NOP
-    10 => x"D503201F",
+    12 => x"D503201F",
 
     others => x"D503201F"
 );
 
 begin
 
-    Instruction <= ROM(
-        to_integer(unsigned(Address(6 downto 2)))
-    );
+    Instruction <= ROM(to_integer(unsigned(Address(6 downto 2))));
 
 end Behavioral;
