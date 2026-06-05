@@ -11,6 +11,9 @@ architecture Behavioral of tProcessor is
 
 begin
 
+    --------------------------------------------------
+    -- Device Under Test
+    --------------------------------------------------
     DUT : entity work.Processor
         port map(
             clk   => clk,
@@ -19,8 +22,8 @@ begin
 
     --------------------------------------------------
     -- Clock Generation
+    -- Clock period = 20 ns
     --------------------------------------------------
-
     clk_process : process
     begin
 
@@ -39,14 +42,13 @@ begin
     --------------------------------------------------
     -- Reset
     --------------------------------------------------
-
-    process
+    reset_process : process
     begin
 
+        reset <= '1';
         wait for 25 ns;
 
         reset <= '0';
-
         wait;
 
     end process;
